@@ -13,8 +13,6 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask groundMask;
 
     Vector3 velocity;
-
-    bool isGrounded;
     bool isMoving;
 
     private Vector3 lastPosition = new Vector3(0f, 0f, 0f);
@@ -27,7 +25,7 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         //ground check
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+        bool isGrounded = controller.isGrounded;
 
         //reset default velocity 
         if (isGrounded && velocity.y < 0)
