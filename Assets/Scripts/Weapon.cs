@@ -10,7 +10,7 @@ public class Weapon : MonoBehaviour
     //shooting
     public bool isShooting, readyToShoot;
     bool allowReset = true;
-    public float shootingDelay = 2f;
+    public float shootingDelay = 0.2f;
 
     //burst 
     public int bulletsPerBurst = 3;
@@ -22,7 +22,7 @@ public class Weapon : MonoBehaviour
     // Bullet
     public GameObject bulletPrefab;
     public Transform bulletSpawn;
-    public float bulletVelocity = 50f;
+    public float bulletVelocity = 500f;
     public float bulletPrefabLifeTime = 3f;
 
     public enum ShootingMode
