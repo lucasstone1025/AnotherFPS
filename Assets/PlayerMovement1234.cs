@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem; // New Input System
 
 [RequireComponent(typeof(CharacterController))]
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement1234 : MonoBehaviour
 {
     public float MoveSmoothTime = 0.08f;
     public float GravityStrength = 20f;
