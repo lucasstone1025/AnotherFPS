@@ -4,7 +4,8 @@ public class PlayerMovementTimeDT : MonoBehaviour
 {
     private CharacterController controller; 
 
-    public float speed = 12f;
+    public float walkSpeed = 12f;
+    public float sprintSpeed = 24f;
     public float gravity = -9.81f * 2;
     public float jumpHeight = 3f;
 
@@ -13,6 +14,7 @@ public class PlayerMovementTimeDT : MonoBehaviour
     public LayerMask groundMask;
 
     Vector3 velocity;
+    // isMoving is useless rn
     bool isMoving;
 
     private Vector3 lastPosition = new Vector3(0f, 0f, 0f);
@@ -41,7 +43,15 @@ public class PlayerMovementTimeDT : MonoBehaviour
         Vector3 move = transform.right * x + transform.forward * z; //(right/left) + (forward/backward
 
         // actually move the player
-        controller.Move(move * speed * Time.deltaTime);
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            controller.Move(move * sprintSpeed * Time.deltaTime);
+        }
+        else
+        {
+            controller.Move(move * walkSpeed * Time.deltaTime);
+        }
+
 
         //jumping
         if (Input.GetButtonDown("Jump") && isGrounded)
