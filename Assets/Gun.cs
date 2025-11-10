@@ -17,7 +17,7 @@ public class NewMonoBehaviourScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Automic)
+        if(Automatic)
         {
             if(Input.GetMouseButton(0))
             {

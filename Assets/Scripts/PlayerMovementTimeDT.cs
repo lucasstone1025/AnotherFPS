@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovementTimeDT : MonoBehaviour
 {
     private CharacterController controller; 
 
