@@ -17,11 +17,11 @@ public class RandomSpawner : MonoBehaviour
     void Start()
     {
         // Define your five spawn positions here (change as needed)
-        spawnPositions[0] = new Vector3(-5f, 2f, -5f);
-        spawnPositions[1] = new Vector3( 5f, 2f, -5f);
-        spawnPositions[2] = new Vector3(-5f, 2f,  5f);
-        spawnPositions[3] = new Vector3( 5f, 2f,  5f);
-        spawnPositions[4] = new Vector3(  0f, 2f,   0f);
+        spawnPositions[0] = new Vector3(70f, 22.3f, 40f);
+        spawnPositions[1] = new Vector3( 75f, 22.3f, 45f);
+        spawnPositions[2] = new Vector3(80f, 22.3f,  45f);
+        spawnPositions[3] = new Vector3( 70f, 22.3f,  45f);
+        spawnPositions[4] = new Vector3(  75f, 22.3f,   40f);
 
         occupants = new GameObject[spawnPositions.Length];
         timer = spawnInterval;
