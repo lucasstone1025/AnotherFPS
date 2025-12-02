@@ -22,6 +22,17 @@ public class Bullet : MonoBehaviour
             Destroy(gameObject);
         }
 
+        if (objHit.gameObject.CompareTag("Enemy") || objHit.gameObject.name.Contains("Skeleton"))
+        {
+            print("hit enemy: " + objHit.gameObject.name + " !");
+
+            // Destroy the skeleton
+            Destroy(objHit.gameObject);
+
+            // Destroy the bullet
+            Destroy(gameObject);
+        }
+
     }
     
     void CreateBulletImpactEffect(Collision objHit)
