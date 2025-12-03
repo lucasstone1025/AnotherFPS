@@ -5,10 +5,9 @@ public class AI_movement : MonoBehaviour
     public Transform player;           // Assign the player in the Inspector
     public float moveSpeed = 3.75f;    // Half of player's run speed (7.5 / 2)
     public float stoppingDistance = 2f; // How close to get before stopping
-    public float obstacleDetectionRange = 1.5f; // How far ahead to check for obstacles
-    public LayerMask obstacleLayer;    // What counts as an obstacle
+    public float rotationSpeed = 3f;   // How fast to rotate toward player
 
-    private CharacterController controller;
+    private Rigidbody rb;
 
     void Start()
     {
@@ -22,44 +21,47 @@ public class AI_movement : MonoBehaviour
             }
         }
 
-        // Get or add CharacterController
-        controller = GetComponent<CharacterController>();
-        if (controller == null)
+        // Get or add Rigidbody
+        rb = GetComponent<Rigidbody>();
+        if (rb == null)
         {
-            controller = gameObject.AddComponent<CharacterController>();
+            rb = gameObject.AddComponent<Rigidbody>();
         }
+
+        // Configure Rigidbody to prevent physics issues
+        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        rb.useGravity = true;
+        rb.mass = 1f;
+        rb.linearDamping = 5f; // Add drag to prevent sliding
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        if (player == null) return;
+        if (player == null || rb == null) return;
 
-        // Calculate direction to player
-        Vector3 direction = (player.position - transform.position).normalized;
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        // Calculate direction to player (only on horizontal plane)
+        Vector3 directionToPlayer = player.position - transform.position;
+        directionToPlayer.y = 0;
+        float distanceToPlayer = directionToPlayer.magnitude;
 
-        // Check for obstacles ahead
-        bool pathClear = !Physics.Raycast(transform.position + Vector3.up, direction, obstacleDetectionRange, obstacleLayer);
-
-        // Move towards player if not within stopping distance and path is clear
-        if (distanceToPlayer > stoppingDistance && pathClear)
+        if (distanceToPlayer > stoppingDistance)
         {
-            // Move horizontally towards player
-            Vector3 move = new Vector3(direction.x, 0, direction.z) * moveSpeed * Time.deltaTime;
-            
-            // Apply gravity
-            move.y = -9.81f * Time.deltaTime;
-            
-            controller.Move(move);
+            // Normalize direction
+            directionToPlayer.Normalize();
 
-            // Rotate to face player
-            Vector3 lookDirection = new Vector3(direction.x, 0, direction.z);
-            if (lookDirection != Vector3.zero)
-            {
-                transform.rotation = Quaternion.Slerp(transform.rotation, 
-                    Quaternion.LookRotation(lookDirection), 
-                    Time.deltaTime * 5f);
-            }
+            // Smoothly rotate to face the player
+            Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
+            rb.rotation = Quaternion.Slerp(rb.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
+
+            // Move forward
+            Vector3 moveVelocity = directionToPlayer * moveSpeed;
+            moveVelocity.y = rb.linearVelocity.y; // Preserve vertical velocity for gravity
+            rb.linearVelocity = moveVelocity;
+        }
+        else
+        {
+            // Stop horizontal movement when close enough
+            rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
         }
     }
 }
