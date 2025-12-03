@@ -56,7 +56,10 @@ public class AI_movement : MonoBehaviour
 
     void Update()
     {
-        if (player == null) return;
+        if (player == null) {
+            Debug.Log("Player is NULL");
+            return;
+        }
 
         // // Calculate direction to player
         // Vector3 direction = (player.position - transform.position).normalized;
@@ -87,6 +90,8 @@ public class AI_movement : MonoBehaviour
         // }
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+        Debug.Log("Distance to player: " + distanceToPlayer + " | Attack Range: " + attackRange + " | Stopping Distance: " + stoppingDistance);
 
         //Attack if in range
         if (distanceToPlayer <= attackRange)
