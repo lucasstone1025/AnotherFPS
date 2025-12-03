@@ -19,11 +19,12 @@ public class Weapon : MonoBehaviour
     //spread
     public float spreadIntensity;
 
-    // Bullet
-    public GameObject bulletPrefab;
+    // Magic Ball (formerly Bullet)
+    public GameObject magicBallPrefab;      // Assign your magic ball prefab here
     public Transform bulletSpawn;
-    public float bulletVelocity = 500f;
-    public float bulletPrefabLifeTime = 3f;
+    public float magicBallVelocity = 15f;   // Slower for better visibility
+    public float magicBallLifeTime = 5f;    // How long before it despawns
+    public float launchAngle = 10f;         // Upward angle for arc trajectory
 
     public enum ShootingMode
     {
@@ -66,17 +67,28 @@ public class Weapon : MonoBehaviour
 
         Vector3 shootingDirection = CalculateDirectionAndSpread().normalized;
 
-        //instantiate bullet 
-        GameObject bullet = Instantiate(bulletPrefab, bulletSpawn.position, Quaternion.identity);
+        // Instantiate magic ball 
+        GameObject magicBall = Instantiate(magicBallPrefab, bulletSpawn.position, Quaternion.identity);
 
-        // pointing the bullet to face the shooting direction
-        bullet.transform.forward = shootingDirection;
+        // Get the rigidbody
+        Rigidbody rb = magicBall.GetComponent<Rigidbody>();
+        
+        if (rb != null)
+        {
+            // Enable gravity for projectile motion
+            rb.useGravity = true;
+            
+            // Calculate launch direction with upward angle for arc
+            Vector3 launchDirection = shootingDirection;
+            launchDirection.y += Mathf.Tan(launchAngle * Mathf.Deg2Rad);
+            launchDirection.Normalize();
+            
+            // Apply velocity for projectile motion
+            rb.linearVelocity = launchDirection * magicBallVelocity;
+        }
 
-        //shoot bullet forward
-        bullet.GetComponent<Rigidbody>().AddForce(bulletSpawn.forward.normalized * bulletVelocity, ForceMode.Impulse);
-
-        //destroy bullet after certain time
-        StartCoroutine(DestroyBulletAfterTime(bullet, bulletPrefabLifeTime));
+        // Destroy magic ball after certain time
+        StartCoroutine(DestroyBulletAfterTime(magicBall, magicBallLifeTime));
 
         // check if done shooting
         if (allowReset)
@@ -92,8 +104,6 @@ public class Weapon : MonoBehaviour
             burstBulletsLeft--;
             Invoke("FireWeapon", shootingDelay); // small delay between burst shots
         }
-
-
     }
     
     private void ResetShot()

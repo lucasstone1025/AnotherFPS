@@ -9641,7 +9641,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1.2, z: 1.1}
-  m_LocalScale: {x: 0.15, y: 0.15, z: 1}
+  m_LocalScale: {x: 0.05, y: 0.05, z: 0.05}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2101164025}
@@ -9738,15 +9738,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Weapon
   playerCamera: {fileID: 330585545}
   isShooting: 0
-  readyToShoot: 0
-  shootingDelay: 0.2
+  readyToShoot: 1
+  shootingDelay: 0.5
   bulletsPerBurst: 3
   burstBulletsLeft: 0
   spreadIntensity: 0
-  bulletPrefab: {fileID: 2732149070910119673, guid: 3e56f104ea3d5b447bac58541f5d9c97, type: 3}
+  magicBallPrefab: {fileID: 1318610485157321729, guid: a83c857132a0c5f4c99bce0d786388ab, type: 3}
   bulletSpawn: {fileID: 2101164025}
-  bulletVelocity: 500
-  bulletPrefabLifeTime: 3
+  magicBallVelocity: 15
+  magicBallLifeTime: 10
+  launchAngle: 5
   currentShootingMode: 2
 --- !u!1001 &637590217
 PrefabInstance:
