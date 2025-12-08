@@ -14,10 +14,6 @@ public class PlayerMovementTimeDT : MonoBehaviour
     public LayerMask groundMask;
 
     Vector3 velocity;
-    // isMoving is useless rn
-    bool isMoving;
-
-    private Vector3 lastPosition = new Vector3(0f, 0f, 0f);
 
     void Start()
     {
@@ -64,18 +60,5 @@ public class PlayerMovementTimeDT : MonoBehaviour
 
         // executing jump
         controller.Move(velocity * Time.deltaTime);
-
-        if (lastPosition != gameObject.transform.position && isGrounded == true)
-        {
-            isMoving = true;
-        }
-        else
-        {
-            isMoving = false;
-        }
-        
-        lastPosition = gameObject.transform.position;
-
-
     }
 }
