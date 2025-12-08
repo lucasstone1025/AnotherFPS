@@ -4814,6 +4814,7 @@ GameObject:
   - component: {fileID: 330585545}
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
+  - component: {fileID: 330585548}
   m_Layer: 3
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -4939,6 +4940,23 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &330585548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f7b3a4689a3b454e8edbdfd528e1f12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Crosshair
+  crosshairColor: {r: 1, g: 1, b: 1, a: 1}
+  crosshairSize: 10
+  crosshairThickness: 2
+  showDot: 1
+  dotSize: 6
 --- !u!1001 &336330887
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6770,6 +6788,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GlobalReferences
   bulletImpactEffectPrefab: {fileID: 1246951891939702759, guid: 73ab52c0eba6f344b96dc4fc65489084, type: 3}
+  explosionEffectPrefab: {fileID: 0}
 --- !u!4 &422290409
 Transform:
   m_ObjectHideFlags: 0
@@ -9626,7 +9645,7 @@ GameObject:
   - component: {fileID: 637176285}
   m_Layer: 3
   m_Name: Weapon
-  m_TagString: Untagged
+  m_TagString: Weapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9641,7 +9660,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1.2, z: 1.1}
-  m_LocalScale: {x: 0.15, y: 0.15, z: 1}
+  m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2101164025}
@@ -9743,10 +9762,11 @@ MonoBehaviour:
   bulletsPerBurst: 3
   burstBulletsLeft: 0
   spreadIntensity: 0
-  bulletPrefab: {fileID: 2732149070910119673, guid: 3e56f104ea3d5b447bac58541f5d9c97, type: 3}
-  bulletSpawn: {fileID: 2101164025}
-  bulletVelocity: 500
-  bulletPrefabLifeTime: 3
+  projectilePrefab: {fileID: 8857831444331824619, guid: 1ec9ffeb0cf044843abf2bdc920ca902, type: 3}
+  projectileSpawn: {fileID: 2101164025}
+  projectileVelocity: 10
+  projectileLifeTime: 3
+  launchAngle: 0
   currentShootingMode: 2
 --- !u!1001 &637590217
 PrefabInstance:
@@ -33621,7 +33641,7 @@ GameObject:
   - component: {fileID: 2093542906}
   m_Layer: 0
   m_Name: Grass
-  m_TagString: Untagged
+  m_TagString: Weapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

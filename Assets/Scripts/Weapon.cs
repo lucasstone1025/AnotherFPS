@@ -17,13 +17,14 @@ public class Weapon : MonoBehaviour
     public int burstBulletsLeft;
 
     //spread
-    public float spreadIntensity;
+    public float spreadIntensity = 0f;
 
-    // Bullet
-    public GameObject bulletPrefab;
-    public Transform bulletSpawn;
-    public float bulletVelocity = 500f;
-    public float bulletPrefabLifeTime = 3f;
+    // Projectile
+    public GameObject projectilePrefab;
+    public Transform projectileSpawn;
+    public float projectileVelocity = 15f; // Slower velocity for visible arc
+    public float projectileLifeTime = 5f;
+    public float launchAngle = 15f; // Angle above horizontal for arc
 
     public enum ShootingMode
     {
@@ -64,19 +65,60 @@ public class Weapon : MonoBehaviour
     {
         readyToShoot = false;
 
+        // Debug checks
+        if (projectilePrefab == null)
+        {
+            Debug.LogError("Projectile Prefab is not assigned!");
+            return;
+        }
+        if (projectileSpawn == null)
+        {
+            Debug.LogError("Projectile Spawn is not assigned!");
+            return;
+        }
+
+        Debug.Log("Firing projectile at position: " + projectileSpawn.position);
+
         Vector3 shootingDirection = CalculateDirectionAndSpread().normalized;
 
-        //instantiate bullet 
-        GameObject bullet = Instantiate(bulletPrefab, bulletSpawn.position, Quaternion.identity);
+        // Spawn projectile forward along the shooting direction (not spawn transform's forward)
+        Vector3 spawnPosition = projectileSpawn.position + shootingDirection * 1.5f;
+        GameObject projectile = Instantiate(projectilePrefab, spawnPosition, Quaternion.identity);
 
-        // pointing the bullet to face the shooting direction
-        bullet.transform.forward = shootingDirection;
+        // Add trail renderer for red trail effect
+        TrailRenderer trail = projectile.GetComponent<TrailRenderer>();
+        if (trail == null)
+        {
+            trail = projectile.AddComponent<TrailRenderer>();
+            trail.time = 0.5f;
+            trail.startWidth = 0.2f;
+            trail.endWidth = 0.05f;
+            trail.material = new Material(Shader.Find("Sprites/Default"));
+            trail.startColor = Color.red;
+            trail.endColor = new Color(1f, 0.5f, 0f, 0f); // Orange fade
+        }
 
-        //shoot bullet forward
-        bullet.GetComponent<Rigidbody>().AddForce(bulletSpawn.forward.normalized * bulletVelocity, ForceMode.Impulse);
+        // Calculate launch velocity - shoot straight forward
+        Rigidbody rb = projectile.GetComponent<Rigidbody>();
+        rb.useGravity = false; // Projectile script handles custom gravity
+        
+        // Ignore all player colliders
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            Collider projectileCollider = projectile.GetComponent<Collider>();
+            Collider[] playerColliders = player.GetComponentsInChildren<Collider>();
+            foreach (Collider col in playerColliders)
+            {
+                Physics.IgnoreCollision(projectileCollider, col);
+            }
+        }
+        
+        // Use the shooting direction directly for straight flight
+        rb.linearVelocity = shootingDirection * projectileVelocity;
 
-        //destroy bullet after certain time
-        StartCoroutine(DestroyBulletAfterTime(bullet, bulletPrefabLifeTime));
+        //destroy projectile after certain time
+        StartCoroutine(DestroyProjectileAfterTime(projectile, projectileLifeTime));
 
         // check if done shooting
         if (allowReset)
@@ -117,19 +159,29 @@ public class Weapon : MonoBehaviour
             targetPoint = ray.GetPoint(100); // some far away point
         }
 
-        Vector3 direction = targetPoint - bulletSpawn.position;
+        Vector3 direction = targetPoint - projectileSpawn.position;
 
-        float x = UnityEngine.Random.Range(-spreadIntensity, spreadIntensity);
-        float y = UnityEngine.Random.Range(-spreadIntensity, spreadIntensity);
+        // Apply spread in camera space, not world space
+        if (spreadIntensity > 0)
+        {
+            float x = UnityEngine.Random.Range(-spreadIntensity, spreadIntensity);
+            float y = UnityEngine.Random.Range(-spreadIntensity, spreadIntensity);
+            
+            direction += playerCamera.transform.right * x;
+            direction += playerCamera.transform.up * y;
+        }
 
-        // return the shooting direction and spread 
-        return direction + new Vector3(x, y, 0);
+        // return the shooting direction with spread
+        return direction;
 
     }
 
-    private IEnumerator DestroyBulletAfterTime(GameObject bullet, float delay)
+    private IEnumerator DestroyProjectileAfterTime(GameObject projectile, float delay)
     {
         yield return new WaitForSeconds(delay);
-        Destroy(bullet);
+        if (projectile != null)
+        {
+            Destroy(projectile);
+        }
     }
 }
