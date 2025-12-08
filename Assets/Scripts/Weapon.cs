@@ -1,179 +1,107 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
-
     public Camera playerCamera;
 
-    //shooting
-    public bool isShooting, readyToShoot;
-    bool allowReset = true;
-    public float shootingDelay = 0.2f;
-
-    //burst 
-    public int bulletsPerBurst = 3;
-    public int burstBulletsLeft;
-
-    //spread
-    public float spreadIntensity = 0f;
-
-    // Projectile
+    // Projectile settings
     public GameObject projectilePrefab;
     public Transform projectileSpawn;
-    public float projectileVelocity = 15f; // Slower velocity for visible arc
-    public float projectileLifeTime = 5f;
-    public float launchAngle = 15f; // Angle above horizontal for arc
+    public float projectileVelocity = 50f;      // Faster projectile speed
+    public float projectileLifeTime = 10f;      // Longer lifetime to reach distant targets
+    public float projectileSpawnOffset = 3.5f;  // Spawn farther forward to avoid collisions
 
-    public enum ShootingMode
-    {
-        Single,
-        Burst,
-        Auto
-    }
+    // Cooldown settings
+    public float shootCooldown = 0.25f;  // Time between shots in seconds (quarter second cooldown)
+    private float nextFireTime = 0f;    // Time when we can fire next
 
-    public ShootingMode currentShootingMode;
-
-    private void Awake()
-    {
-        readyToShoot = true;
-        burstBulletsLeft = bulletsPerBurst;
-    }
-    
     void Update()
     {
-        if (currentShootingMode == ShootingMode.Auto)
+        // Only shoot on mouse click (not hold) and if cooldown is ready
+        if (Input.GetKeyDown(KeyCode.Mouse0) && Time.time >= nextFireTime)
         {
-            //hold to shoot
-            isShooting = Input.GetKey(KeyCode.Mouse0);
-        }
-        else if (currentShootingMode == ShootingMode.Single || currentShootingMode == ShootingMode.Burst)
-        {
-            //press to shoot
-            isShooting = Input.GetKeyDown(KeyCode.Mouse0);
-        }
-        
-        if (readyToShoot && isShooting)
-        {
-            burstBulletsLeft = bulletsPerBurst;
-            FireWeapon();
+            FireProjectile();
         }
     }
 
-    private void FireWeapon()
+    private void FireProjectile()
     {
-        readyToShoot = false;
+        // Validation checks
+        if (projectilePrefab == null || projectileSpawn == null) return;
 
-        // Debug checks
-        if (projectilePrefab == null)
-        {
-            Debug.LogError("Projectile Prefab is not assigned!");
-            return;
-        }
-        if (projectileSpawn == null)
-        {
-            Debug.LogError("Projectile Spawn is not assigned!");
-            return;
-        }
+        // Set next fire time (cooldown)
+        nextFireTime = Time.time + shootCooldown;
 
-        Debug.Log("Firing projectile at position: " + projectileSpawn.position);
+        // Calculate shooting direction from camera center
+        Vector3 shootingDirection = CalculateShootingDirection().normalized;
 
-        Vector3 shootingDirection = CalculateDirectionAndSpread().normalized;
-
-        // Spawn projectile forward along the shooting direction (not spawn transform's forward)
-        Vector3 spawnPosition = projectileSpawn.position + shootingDirection * 1.5f;
+        // Spawn projectile forward from spawn point
+        Vector3 spawnPosition = projectileSpawn.position + shootingDirection * projectileSpawnOffset;
         GameObject projectile = Instantiate(projectilePrefab, spawnPosition, Quaternion.identity);
 
-        // Add trail renderer for red trail effect
-        TrailRenderer trail = projectile.GetComponent<TrailRenderer>();
-        if (trail == null)
-        {
-            trail = projectile.AddComponent<TrailRenderer>();
-            trail.time = 0.5f;
-            trail.startWidth = 0.2f;
-            trail.endWidth = 0.05f;
-            trail.material = new Material(Shader.Find("Sprites/Default"));
-            trail.startColor = Color.red;
-            trail.endColor = new Color(1f, 0.5f, 0f, 0f); // Orange fade
-        }
-
-        // Calculate launch velocity - shoot straight forward
+        // Set up projectile physics
         Rigidbody rb = projectile.GetComponent<Rigidbody>();
-        rb.useGravity = false; // Projectile script handles custom gravity
-        
-        // Ignore all player colliders
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
+        if (rb != null)
         {
-            Collider projectileCollider = projectile.GetComponent<Collider>();
-            Collider[] playerColliders = player.GetComponentsInChildren<Collider>();
-            foreach (Collider col in playerColliders)
-            {
-                Physics.IgnoreCollision(projectileCollider, col);
-            }
+            rb.useGravity = false;
+            rb.linearVelocity = shootingDirection * projectileVelocity;
         }
-        
-        // Use the shooting direction directly for straight flight
-        rb.linearVelocity = shootingDirection * projectileVelocity;
 
-        //destroy projectile after certain time
+        // Ignore collisions with player and weapon
+        IgnorePlayerCollisions(projectile);
+
+        // Destroy projectile after lifetime
         StartCoroutine(DestroyProjectileAfterTime(projectile, projectileLifeTime));
-
-        // check if done shooting
-        if (allowReset)
-        {
-            //reset shot after delay
-            Invoke("ResetShot", shootingDelay);
-            allowReset = false;
-        }
-
-        //burst mode
-        if (currentShootingMode == ShootingMode.Burst && burstBulletsLeft > 1)
-        {
-            burstBulletsLeft--;
-            Invoke("FireWeapon", shootingDelay); // small delay between burst shots
-        }
-
-
-    }
-    
-    private void ResetShot()
-    {
-        readyToShoot = true;
-        allowReset = true;
     }
 
-    public Vector3 CalculateDirectionAndSpread()
+    private Vector3 CalculateShootingDirection()
     {
+        // Shoot from center of camera view
         Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
         RaycastHit hit;
 
         Vector3 targetPoint;
         if (Physics.Raycast(ray, out hit))
         {
+            // Aim at what we're looking at
             targetPoint = hit.point;
         }
         else
         {
-            targetPoint = ray.GetPoint(100); // some far away point
+            // Aim far forward if nothing hit
+            targetPoint = ray.GetPoint(100);
         }
 
-        Vector3 direction = targetPoint - projectileSpawn.position;
+        // Direction from spawn point to target
+        return targetPoint - projectileSpawn.position;
+    }
 
-        // Apply spread in camera space, not world space
-        if (spreadIntensity > 0)
+    private void IgnorePlayerCollisions(GameObject projectile)
+    {
+        Collider projCollider = projectile.GetComponent<Collider>();
+        if (projCollider == null) return;
+
+        // Ignore player colliders
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
         {
-            float x = UnityEngine.Random.Range(-spreadIntensity, spreadIntensity);
-            float y = UnityEngine.Random.Range(-spreadIntensity, spreadIntensity);
-            
-            direction += playerCamera.transform.right * x;
-            direction += playerCamera.transform.up * y;
+            Collider[] playerColliders = player.GetComponentsInChildren<Collider>();
+            foreach (Collider col in playerColliders)
+            {
+                Physics.IgnoreCollision(projCollider, col);
+            }
         }
 
-        // return the shooting direction with spread
-        return direction;
-
+        // Ignore weapon colliders
+        Collider[] weaponColliders = GetComponentsInChildren<Collider>();
+        foreach (Collider weaponCol in weaponColliders)
+        {
+            if (weaponCol != null)
+            {
+                Physics.IgnoreCollision(projCollider, weaponCol);
+            }
+        }
     }
 
     private IEnumerator DestroyProjectileAfterTime(GameObject projectile, float delay)
@@ -183,5 +111,17 @@ public class Weapon : MonoBehaviour
         {
             Destroy(projectile);
         }
+    }
+
+    // Public method to get cooldown info (for UI)
+    public float GetCooldownTimeRemaining()
+    {
+        float timeRemaining = nextFireTime - Time.time;
+        return Mathf.Max(0f, timeRemaining);
+    }
+
+    public bool IsReadyToFire()
+    {
+        return Time.time >= nextFireTime;
     }
 }

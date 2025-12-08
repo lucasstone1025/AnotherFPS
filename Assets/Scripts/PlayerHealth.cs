@@ -40,8 +40,6 @@ public class PlayerHealth : MonoBehaviour
 
         UpdateHealthBar();
 
-        Debug.Log("Player took " + damage + " damage. Current health: " + currentHealth);
-
         if (currentHealth <= 0)
         {
             Die();
@@ -56,17 +54,14 @@ public class PlayerHealth : MonoBehaviour
 
         currentHealth += amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        
-        UpdateHealthBar();
 
-        Debug.Log("Player healed " + amount + ". Current health: " + currentHealth);
+        UpdateHealthBar();
     }
 
     public void FullHeal()
     {
         currentHealth = maxHealth;
         UpdateHealthBar();
-        Debug.Log("Player fully healed. Current health: " + currentHealth);
     }
 
     void UpdateHealthBar()
@@ -79,12 +74,17 @@ public class PlayerHealth : MonoBehaviour
 
     void Die()
     {
-        // Handle player death (e.g., reload scene, show game over screen)
-        Debug.Log("Player has died.");
-
-        //for now just reload scene
-        UnityEngine.SceneManagement.SceneManager.LoadScene(
-            UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+        // Notify GameManager of player death
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.GameOver();
+        }
+        else
+        {
+            // Fallback if no GameManager (for testing)
+            UnityEngine.SceneManagement.SceneManager.LoadScene(
+                UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+        }
     }
 
     public bool CanTakeDamage()

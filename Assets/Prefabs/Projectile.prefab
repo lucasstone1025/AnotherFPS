@@ -19383,6 +19383,7 @@ Transform:
   - {fileID: 399747426202981352}
   - {fileID: 2012546070211392907}
   - {fileID: 4550118763191187506}
+  - {fileID: 4689950505395744412}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &3265592709018451800
@@ -24248,9 +24249,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e8c0795e83d66e4fbec695a76268bd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
+  explosionEffectPrefab: {fileID: 0}
   explosionRadius: 5
   explosionForce: 700
-  damage: 20
+  damage: 1000
+  gravityScale: 0.3
+  rotationSpeed: {x: 0, y: 360, z: 0}
+  enablePulsing: 1
+  pulseSpeed: 3
+  pulseAmount: 0.2
+  lightColor: {r: 1, g: 0.5, b: 0, a: 1}
+  lightIntensity: 3
+  lightRange: 8
 --- !u!1 &8912621004708214227
 GameObject:
   m_ObjectHideFlags: 0
@@ -29087,3 +29097,65 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!1001 &8290099756415163550
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 736785487290342725}
+    m_Modifications:
+    - target: {fileID: 3610291427603083777, guid: ce2a21346cb472947b56648683f1a3f4, type: 3}
+      propertyPath: m_Name
+      value: vfx_Orb09_Orange
+      objectReference: {fileID: 0}
+    - target: {fileID: 3610291427603083778, guid: ce2a21346cb472947b56648683f1a3f4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3610291427603083778, guid: ce2a21346cb472947b56648683f1a3f4, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3610291427603083778, guid: ce2a21346cb472947b56648683f1a3f4, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3610291427603083778, guid: ce2a21346cb472947b56648683f1a3f4, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3610291427603083778, guid: ce2a21346cb472947b56648683f1a3f4, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3610291427603083778, guid: ce2a21346cb472947b56648683f1a3f4, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3610291427603083778, guid: ce2a21346cb472947b56648683f1a3f4, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3610291427603083778, guid: ce2a21346cb472947b56648683f1a3f4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3610291427603083778, guid: ce2a21346cb472947b56648683f1a3f4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3610291427603083778, guid: ce2a21346cb472947b56648683f1a3f4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ce2a21346cb472947b56648683f1a3f4, type: 3}
+--- !u!4 &4689950505395744412 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3610291427603083778, guid: ce2a21346cb472947b56648683f1a3f4, type: 3}
+  m_PrefabInstance: {fileID: 8290099756415163550}
+  m_PrefabAsset: {fileID: 0}
