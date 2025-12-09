@@ -13,6 +13,7 @@ public class MagicBall : MonoBehaviour
     private bool hasExploded = false;
     private float spawnTime;
     private Rigidbody rb;
+    private bool missedEnemy = true;
 
     void Start()
     {
@@ -75,9 +76,13 @@ public class MagicBall : MonoBehaviour
     {
         // Ignore collisions in the first 0.1 seconds after spawn (safety buffer)
         if (Time.time - spawnTime < 0.1f) return;
-        
+
         // Don't explode if hitting player or weapon
-        if (collision.gameObject.CompareTag("Player")) return;
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            PointsTracker.instance.MissedEnemy();
+            return;
+        }
         
         if (hasExploded) return; // Prevent multiple explosions
         
@@ -129,6 +134,7 @@ public class MagicBall : MonoBehaviour
                 // If parent is enemy, destroy parent instead
                 if (isEnemy)
                 {
+                    missedEnemy = false;
                     Destroy(nearbyObject.transform.parent.gameObject);
                     Debug.Log("Destroyed enemy (parent): " + nearbyObject.transform.parent.name);
                     continue;
@@ -137,6 +143,7 @@ public class MagicBall : MonoBehaviour
 
             if (isEnemy)
             {
+                missedEnemy = false;
                 Destroy(nearbyObject.gameObject);
                 Debug.Log("Destroyed enemy: " + nearbyObject.name);
             }
@@ -151,7 +158,13 @@ public class MagicBall : MonoBehaviour
 
         // Destroy the magic ball
         Destroy(gameObject);
+        if (missedEnemy)
+        {
+            PointsTracker.instance.MissedEnemy();
+        }
+        missedEnemy = true;
     }
+
 
     // Optional: Visualize explosion radius in editor
     private void OnDrawGizmosSelected()

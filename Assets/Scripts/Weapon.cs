@@ -109,6 +109,7 @@ public class Weapon : MonoBehaviour
         yield return new WaitForSeconds(delay);
         if (projectile != null)
         {
+            PointsTracker.instance.MissedEnemy();
             Destroy(projectile);
         }
     }

@@ -31,6 +31,9 @@ public class GameManager : MonoBehaviour
     public int killsThisWave = 0;         // Kills in current wave
     public int enemiesRemainingThisWave = 0;  // How many enemies left to kill
 
+    // ===== POINT TRACKING =====
+    public int points = 0;
+
     // ===== WAVE COMPLETION TRACKING =====
     private bool isWaveCompleting = false;  // Prevents WaveComplete from being called multiple times
 
@@ -104,6 +107,7 @@ public class GameManager : MonoBehaviour
         // Prevent this from being called multiple times per wave
         if (isWaveCompleting) return;
         isWaveCompleting = true;
+        PointsTracker.instance.AddWavePoints();
 
         Debug.Log("=== WAVE " + currentWave + " COMPLETE ===");
 
@@ -155,6 +159,7 @@ public class GameManager : MonoBehaviour
         killsThisWave++;
         totalKills++;
         enemiesRemainingThisWave--;
+        PointsTracker.instance.AddKillPoints();
 
         Debug.Log("Enemy killed! Kills this wave: " + killsThisWave + " | Remaining: " + enemiesRemainingThisWave);
     }
