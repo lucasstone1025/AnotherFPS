@@ -54,6 +54,13 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        // Load saved max waves from PlayerPrefs if it exists
+        if (PlayerPrefs.HasKey("MaxWaves"))
+        {
+            maxWaves = PlayerPrefs.GetInt("MaxWaves");
+            Debug.Log("Loaded max waves from save: " + maxWaves);
+        }
+
         // Start the first wave when the game begins
         StartWave(currentWave);
     }
@@ -130,7 +137,7 @@ public class GameManager : MonoBehaviour
     void CleanupDeadEnemies()
     {
         // Find all game objects in the scene
-        GameObject[] allObjects = GameObject.FindObjectsOfType<GameObject>();
+        GameObject[] allObjects = GameObject.FindObjectsByType<GameObject>(FindObjectsSortMode.None);
         int cleanedUp = 0;
 
         foreach (GameObject obj in allObjects)
@@ -178,7 +185,12 @@ public class GameManager : MonoBehaviour
         currentState = GameState.Paused;
         Time.timeScale = 0f;  // Freeze the game
         Debug.Log("Game Paused");
-        // TODO: Show pause menu UI
+
+        // Show pause menu UI
+        if (MenuManager.Instance != null)
+        {
+            MenuManager.Instance.ShowPauseMenu();
+        }
     }
 
     public void Resume()
@@ -186,7 +198,12 @@ public class GameManager : MonoBehaviour
         currentState = GameState.Playing;
         Time.timeScale = 1f;  // Unfreeze the game
         Debug.Log("Game Resumed");
-        // TODO: Hide pause menu UI
+
+        // Hide pause menu UI
+        if (MenuManager.Instance != null)
+        {
+            MenuManager.Instance.HidePauseMenu();
+        }
     }
 
     public void GameOver()
@@ -202,6 +219,12 @@ public class GameManager : MonoBehaviour
         {
             UIManager.Instance.ShowGameOver();
         }
+
+        // Show cursor for menu interaction
+        if (MenuManager.Instance != null)
+        {
+            MenuManager.Instance.ShowEndGameCursor();
+        }
     }
 
     public void Victory()
@@ -216,6 +239,12 @@ public class GameManager : MonoBehaviour
         if (UIManager.Instance != null)
         {
             UIManager.Instance.ShowVictory();
+        }
+
+        // Show cursor for menu interaction
+        if (MenuManager.Instance != null)
+        {
+            MenuManager.Instance.ShowEndGameCursor();
         }
     }
 

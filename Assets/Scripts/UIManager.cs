@@ -64,7 +64,8 @@ public class UIManager : MonoBehaviour
         if (waveText != null)
         {
             int currentWave = GameManager.Instance.GetCurrentWave();
-            waveText.text = "Wave " + currentWave;
+            int maxWaves = GameManager.Instance.maxWaves;
+            waveText.text = "Wave " + currentWave + "/" + maxWaves;
         }
     }
 
@@ -96,7 +97,8 @@ public class UIManager : MonoBehaviour
             {
                 int wave = GameManager.Instance.GetCurrentWave();
                 int kills = GameManager.Instance.GetTotalKills();
-                finalStatsText.text = "Wave " + wave + " | " + kills + " Kills";
+                int maxWaves = GameManager.Instance.maxWaves;
+                finalStatsText.text = "Wave " + wave + "/" + maxWaves + " | " + kills + " Kills";
             }
         }
     }
@@ -116,9 +118,9 @@ public class UIManager : MonoBehaviour
 
             if (victoryStatsText != null && GameManager.Instance != null)
             {
-                int waves = GameManager.Instance.maxWaves;
+                int maxWaves = GameManager.Instance.maxWaves;
                 int kills = GameManager.Instance.GetTotalKills();
-                victoryStatsText.text = "You beat all " + waves + " waves!\nTotal Kills: " + kills;
+                victoryStatsText.text = "You beat all " + maxWaves + " waves!\nTotal Kills: " + kills;
             }
         }
     }

@@ -24250,7 +24250,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
   explosionEffectPrefab: {fileID: 0}
-  explosionRadius: 5
+  explosionRadius: 1
   explosionForce: 700
   damage: 1000
   gravityScale: 0.3

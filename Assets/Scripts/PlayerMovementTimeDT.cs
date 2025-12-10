@@ -7,7 +7,7 @@ public class PlayerMovementTimeDT : MonoBehaviour
     public float walkSpeed = 12f;
     public float sprintSpeed = 24f;
     public float gravity = -9.81f * 2;
-    public float jumpHeight = 3f;
+    public float jumpHeight = 1.5f;
 
     public Transform groundCheck;
     public float groundDistance = 0.4f;

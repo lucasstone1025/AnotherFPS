@@ -80,6 +80,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c0e8ec4be6a4d554881a5c8bb6d0c0cf, type: 3}
       insertIndex: -1
       addedObject: {fileID: -3513188226137177886}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c0e8ec4be6a4d554881a5c8bb6d0c0cf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3297954473124184801}
     - targetCorrespondingSourceObject: {fileID: -5067417469064874575, guid: c0e8ec4be6a4d554881a5c8bb6d0c0cf, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3617780007867941126}
@@ -1332,3 +1335,16 @@ MonoBehaviour:
   maxHealth: 40
   ragdollDestroyDelay: 5
   useRagdoll: 1
+--- !u!114 &3297954473124184801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8858051749441068820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b12fa6fa63495a44882f9aef05e5a27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkeletonHitbox
+  hitboxRadius: 1
