@@ -52,9 +52,9 @@ public class RandomSpawner : MonoBehaviour
         // spawn
         GameObject obj = Instantiate(cubePrefab, spawnPositions[idx], Quaternion.identity);
 
-        // // ensure it can be pushed when shot (deleted for testing)
-        // if (!obj.TryGetComponent<Rigidbody>(out var rb))
-        //     rb = obj.AddComponent<Rigidbody>();
+        // ensure it can be pushed when shot
+        if (!obj.TryGetComponent<Rigidbody>(out var rb))
+            rb = obj.AddComponent<Rigidbody>();
 
         occupants[idx] = obj;
     }
