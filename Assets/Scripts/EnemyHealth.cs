@@ -6,21 +6,18 @@ public class EnemyHealth : MonoBehaviour
     public float ragdollDestroyDelay = 5f;  // How long before ragdoll is removed
     public bool useRagdoll = true;           // Toggle ragdoll on/off
 
+    //audio settings
+    public AudioClip deathSound;
+    private AudioSource audioSource;
+
     private float currentHealth;
     private bool isDead = false;
     private Animator animator;
     private Rigidbody[] ragdollRigidbodies;
 
-    //enemy hit audio
-    public AudioClip deathSound;
-    private AudioSource audioSource;
-
     private void Start()
     {
         currentHealth = maxHealth;
-        
-        audioSource = GetComponent<AudioSource>();
-
 
         // Get animator component
         animator = GetComponent<Animator>();
@@ -30,6 +27,7 @@ public class EnemyHealth : MonoBehaviour
 
         // Disable ragdoll rigidbodies at start (keep them kinematic)
         DisableRagdoll();
+        audioSource = GetComponent<AudioSource>();
     }
 
     public void TakeDamage(float damage)
@@ -49,10 +47,12 @@ public class EnemyHealth : MonoBehaviour
         if (isDead) return;
         isDead = true;
 
-        if (audioSource != null && deathSound != null)
-    {
-        audioSource.PlayOneShot(deathSound);
-    }
+        //audio of kill
+        if(deathSound != null && audioSource != null)
+        {
+            audioSource.pitch = Random.Range(0.95f, 1.05f);
+            audioSource.PlayOneShot(deathSound);
+        }
 
         // Notify GameManager of the kill
         if (GameManager.Instance != null)
@@ -88,9 +88,10 @@ public class EnemyHealth : MonoBehaviour
 
         // Disable this script
         this.enabled = false;
-
+        // Destroy skeleton AFTER the sound plays (use whichever is longer)
+        float destroyDelay = Mathf.Max(ragdollDestroyDelay, deathSound.length);
         // Destroy the skeleton after delay
-        Destroy(gameObject, ragdollDestroyDelay);
+        Destroy(gameObject, destroyDelay);
     }
 
     void DisableRagdoll()

@@ -10,16 +10,16 @@ public class PlayerHealth : MonoBehaviour
     //UI References
     public Image healthBarFill;
 
-    //hurt audio
-    private AudioSource audioSource;
-    public AudioClip hurtSound;
-
     //Damage Settings
     public float damageCooldown = 1f; // Time in seconds between taking damage
     private float lastDamageTime;
 
     // Singleton for easy access from AI
     public static PlayerHealth Instance { get; private set; }
+
+    //audio
+    public AudioClip hurtSound;
+    private AudioSource audioSource;
 
     void Awake()
     {
@@ -31,6 +31,7 @@ public class PlayerHealth : MonoBehaviour
     {
         UpdateHealthBar();
         audioSource = GetComponent<AudioSource>();
+
     }
 
     public void TakeDamage(float damage)
@@ -44,9 +45,10 @@ public class PlayerHealth : MonoBehaviour
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
         UpdateHealthBar();
-
-         if (audioSource != null && hurtSound != null)
+        // Play hurt sound
+        if (hurtSound != null && audioSource != null && currentHealth > 0)
         {
+            audioSource.pitch = Random.Range(0.95f, 1.05f); // optional variation
             audioSource.PlayOneShot(hurtSound);
         }
 

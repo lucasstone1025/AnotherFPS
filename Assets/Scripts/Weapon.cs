@@ -20,6 +20,15 @@ public class Weapon : MonoBehaviour
     private AudioSource audioSource;
     public AudioClip shootSound;
 
+    //Audio Settings
+    public AudioClip fireSound;
+    private AudioSource audioSource;
+
+    void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
+
     void Update()
     {
         // Only shoot on mouse click (not hold) and if cooldown is ready
@@ -36,6 +45,12 @@ public class Weapon : MonoBehaviour
 
     private void FireProjectile()
     {
+        //Play Shooting Sound
+        if(fireSound != null && audioSource != null)
+        {
+            audioSource.pitch = Random.Range(0.95f, 1.05f);
+            audioSource.PlayOneShot(fireSound);
+        }
         // Validation checks
         if (projectilePrefab == null || projectileSpawn == null) return;
 
