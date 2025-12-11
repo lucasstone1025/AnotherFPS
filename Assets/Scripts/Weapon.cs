@@ -1,135 +1,128 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
-
     public Camera playerCamera;
 
-    //shooting
-    public bool isShooting, readyToShoot;
-    bool allowReset = true;
-    public float shootingDelay = 0.2f;
+    // Projectile settings
+    public GameObject projectilePrefab;
+    public Transform projectileSpawn;
+    public float projectileVelocity = 50f;      // Faster projectile speed
+    public float projectileLifeTime = 10f;      // Longer lifetime to reach distant targets
+    public float projectileSpawnOffset = 3.5f;  // Spawn farther forward to avoid collisions
 
-    //burst 
-    public int bulletsPerBurst = 3;
-    public int burstBulletsLeft;
+    // Cooldown settings
+    public float shootCooldown = 0.25f;  // Time between shots in seconds (quarter second cooldown)
+    private float nextFireTime = 0f;    // Time when we can fire next
 
-    //spread
-    public float spreadIntensity;
-
-    // Bullet
-    public GameObject bulletPrefab;
-    public Transform bulletSpawn;
-    public float bulletVelocity = 500f;
-    public float bulletPrefabLifeTime = 3f;
-
-    public enum ShootingMode
-    {
-        Single,
-        Burst,
-        Auto
-    }
-
-    public ShootingMode currentShootingMode;
-
-    private void Awake()
-    {
-        readyToShoot = true;
-        burstBulletsLeft = bulletsPerBurst;
-    }
-    
     void Update()
     {
-        if (currentShootingMode == ShootingMode.Auto)
+        // Only shoot on mouse click (not hold) and if cooldown is ready
+        if (Input.GetKeyDown(KeyCode.Mouse0) && Time.time >= nextFireTime)
         {
-            //hold to shoot
-            isShooting = Input.GetKey(KeyCode.Mouse0);
-        }
-        else if (currentShootingMode == ShootingMode.Single || currentShootingMode == ShootingMode.Burst)
-        {
-            //press to shoot
-            isShooting = Input.GetKeyDown(KeyCode.Mouse0);
-        }
-        
-        if (readyToShoot && isShooting)
-        {
-            burstBulletsLeft = bulletsPerBurst;
-            FireWeapon();
+            FireProjectile();
         }
     }
 
-    private void FireWeapon()
+    private void FireProjectile()
     {
-        readyToShoot = false;
+        // Validation checks
+        if (projectilePrefab == null || projectileSpawn == null) return;
 
-        Vector3 shootingDirection = CalculateDirectionAndSpread().normalized;
+        // Set next fire time (cooldown)
+        nextFireTime = Time.time + shootCooldown;
 
-        //instantiate bullet 
-        GameObject bullet = Instantiate(bulletPrefab, bulletSpawn.position, Quaternion.identity);
+        // Calculate shooting direction from camera center
+        Vector3 shootingDirection = CalculateShootingDirection().normalized;
 
-        // pointing the bullet to face the shooting direction
-        bullet.transform.forward = shootingDirection;
+        // Spawn projectile forward from spawn point
+        Vector3 spawnPosition = projectileSpawn.position + shootingDirection * projectileSpawnOffset;
+        GameObject projectile = Instantiate(projectilePrefab, spawnPosition, Quaternion.identity);
 
-        //shoot bullet forward
-        bullet.GetComponent<Rigidbody>().AddForce(bulletSpawn.forward.normalized * bulletVelocity, ForceMode.Impulse);
-
-        //destroy bullet after certain time
-        StartCoroutine(DestroyBulletAfterTime(bullet, bulletPrefabLifeTime));
-
-        // check if done shooting
-        if (allowReset)
+        // Set up projectile physics
+        Rigidbody rb = projectile.GetComponent<Rigidbody>();
+        if (rb != null)
         {
-            //reset shot after delay
-            Invoke("ResetShot", shootingDelay);
-            allowReset = false;
+            rb.useGravity = false;
+            rb.linearVelocity = shootingDirection * projectileVelocity;
         }
 
-        //burst mode
-        if (currentShootingMode == ShootingMode.Burst && burstBulletsLeft > 1)
-        {
-            burstBulletsLeft--;
-            Invoke("FireWeapon", shootingDelay); // small delay between burst shots
-        }
+        // Ignore collisions with player and weapon
+        IgnorePlayerCollisions(projectile);
 
-
-    }
-    
-    private void ResetShot()
-    {
-        readyToShoot = true;
-        allowReset = true;
+        // Destroy projectile after lifetime
+        StartCoroutine(DestroyProjectileAfterTime(projectile, projectileLifeTime));
     }
 
-    public Vector3 CalculateDirectionAndSpread()
+    private Vector3 CalculateShootingDirection()
     {
+        // Shoot from center of camera view
         Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
         RaycastHit hit;
 
         Vector3 targetPoint;
         if (Physics.Raycast(ray, out hit))
         {
+            // Aim at what we're looking at
             targetPoint = hit.point;
         }
         else
         {
-            targetPoint = ray.GetPoint(100); // some far away point
+            // Aim far forward if nothing hit
+            targetPoint = ray.GetPoint(100);
         }
 
-        Vector3 direction = targetPoint - bulletSpawn.position;
-
-        float x = UnityEngine.Random.Range(-spreadIntensity, spreadIntensity);
-        float y = UnityEngine.Random.Range(-spreadIntensity, spreadIntensity);
-
-        // return the shooting direction and spread 
-        return direction + new Vector3(x, y, 0);
-
+        // Direction from spawn point to target
+        return targetPoint - projectileSpawn.position;
     }
 
-    private IEnumerator DestroyBulletAfterTime(GameObject bullet, float delay)
+    private void IgnorePlayerCollisions(GameObject projectile)
+    {
+        Collider projCollider = projectile.GetComponent<Collider>();
+        if (projCollider == null) return;
+
+        // Ignore player colliders
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            Collider[] playerColliders = player.GetComponentsInChildren<Collider>();
+            foreach (Collider col in playerColliders)
+            {
+                Physics.IgnoreCollision(projCollider, col);
+            }
+        }
+
+        // Ignore weapon colliders
+        Collider[] weaponColliders = GetComponentsInChildren<Collider>();
+        foreach (Collider weaponCol in weaponColliders)
+        {
+            if (weaponCol != null)
+            {
+                Physics.IgnoreCollision(projCollider, weaponCol);
+            }
+        }
+    }
+
+    private IEnumerator DestroyProjectileAfterTime(GameObject projectile, float delay)
     {
         yield return new WaitForSeconds(delay);
-        Destroy(bullet);
+        if (projectile != null)
+        {
+            PointsTracker.instance.MissedEnemy();
+            Destroy(projectile);
+        }
+    }
+
+    // Public method to get cooldown info (for UI)
+    public float GetCooldownTimeRemaining()
+    {
+        float timeRemaining = nextFireTime - Time.time;
+        return Mathf.Max(0f, timeRemaining);
+    }
+
+    public bool IsReadyToFire()
+    {
+        return Time.time >= nextFireTime;
     }
 }

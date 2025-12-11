@@ -91,7 +91,7 @@ public class AI_movement : MonoBehaviour
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        Debug.Log("Distance to player: " + distanceToPlayer + " | Attack Range: " + attackRange + " | Stopping Distance: " + stoppingDistance);
+        //Debug.Log("Distance to player: " + distanceToPlayer + " | Attack Range: " + attackRange + " | Stopping Distance: " + stoppingDistance);
 
         //Attack if in range
         if (distanceToPlayer <= attackRange)
