@@ -16,6 +16,15 @@ public class Weapon : MonoBehaviour
     public float shootCooldown = 0.25f;  // Time between shots in seconds (quarter second cooldown)
     private float nextFireTime = 0f;    // Time when we can fire next
 
+    //Audio Settings
+    public AudioClip fireSound;
+    private AudioSource audioSource;
+
+    void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
+
     void Update()
     {
         // Only shoot on mouse click (not hold) and if cooldown is ready
@@ -27,6 +36,12 @@ public class Weapon : MonoBehaviour
 
     private void FireProjectile()
     {
+        //Play Shooting Sound
+        if(fireSound != null && audioSource != null)
+        {
+            audioSource.pitch = Random.Range(0.95f, 1.05f);
+            audioSource.PlayOneShot(fireSound);
+        }
         // Validation checks
         if (projectilePrefab == null || projectileSpawn == null) return;
 

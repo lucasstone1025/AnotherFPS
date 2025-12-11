@@ -17,6 +17,10 @@ public class PlayerHealth : MonoBehaviour
     // Singleton for easy access from AI
     public static PlayerHealth Instance { get; private set; }
 
+    //audio
+    public AudioClip hurtSound;
+    private AudioSource audioSource;
+
     void Awake()
     {
         Instance = this;
@@ -26,6 +30,8 @@ public class PlayerHealth : MonoBehaviour
     void Start()
     {
         UpdateHealthBar();
+        audioSource = GetComponent<AudioSource>();
+
     }
 
     public void TakeDamage(float damage)
@@ -39,6 +45,12 @@ public class PlayerHealth : MonoBehaviour
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
         UpdateHealthBar();
+        // Play hurt sound
+        if (hurtSound != null && audioSource != null && currentHealth > 0)
+        {
+            audioSource.pitch = Random.Range(0.95f, 1.05f); // optional variation
+            audioSource.PlayOneShot(hurtSound);
+        }
 
         if (currentHealth <= 0)
         {
