@@ -15,6 +15,10 @@ public class Weapon : MonoBehaviour
     // Cooldown settings
     public float shootCooldown = 0.25f;  // Time between shots in seconds (quarter second cooldown)
     private float nextFireTime = 0f;    // Time when we can fire next
+    
+    //audio
+    private AudioSource audioSource;
+    public AudioClip shootSound;
 
     void Update()
     {
@@ -23,6 +27,11 @@ public class Weapon : MonoBehaviour
         {
             FireProjectile();
         }
+    }
+
+    void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void FireProjectile()
@@ -73,6 +82,11 @@ public class Weapon : MonoBehaviour
 
         // Destroy projectile after lifetime
         StartCoroutine(DestroyProjectileAfterTime(projectile, projectileLifeTime));
+
+        if (audioSource != null && shootSound != null)
+{
+        audioSource.PlayOneShot(shootSound);
+}
     }
 
     private Vector3 CalculateShootingDirection()

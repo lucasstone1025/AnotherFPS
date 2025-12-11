@@ -11,9 +11,16 @@ public class EnemyHealth : MonoBehaviour
     private Animator animator;
     private Rigidbody[] ragdollRigidbodies;
 
+    //enemy hit audio
+    public AudioClip deathSound;
+    private AudioSource audioSource;
+
     private void Start()
     {
         currentHealth = maxHealth;
+        
+        audioSource = GetComponent<AudioSource>();
+
 
         // Get animator component
         animator = GetComponent<Animator>();
@@ -41,6 +48,11 @@ public class EnemyHealth : MonoBehaviour
     {
         if (isDead) return;
         isDead = true;
+
+        if (audioSource != null && deathSound != null)
+    {
+        audioSource.PlayOneShot(deathSound);
+    }
 
         // Notify GameManager of the kill
         if (GameManager.Instance != null)
