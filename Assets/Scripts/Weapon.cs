@@ -10,7 +10,7 @@ public class Weapon : MonoBehaviour
     public Transform projectileSpawn;
     public float projectileVelocity = 50f;      // Faster projectile speed
     public float projectileLifeTime = 10f;      // Longer lifetime to reach distant targets
-    public float projectileSpawnOffset = 3.5f;  // Spawn farther forward to avoid collisions
+    public float projectileSpawnOffset = 1.0f;  // Small offset to avoid player collision
 
     // Cooldown settings
     public float shootCooldown = 0.25f;  // Time between shots in seconds (quarter second cooldown)
@@ -48,12 +48,32 @@ public class Weapon : MonoBehaviour
         // Set next fire time (cooldown)
         nextFireTime = Time.time + shootCooldown;
 
-        // Calculate shooting direction from camera center
-        Vector3 shootingDirection = CalculateShootingDirection().normalized;
+        // Get the exact target point from raycast
+        Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+        RaycastHit hit;
+        Vector3 targetPoint;
+        int layerMask = ~LayerMask.GetMask("Player");
 
-        // Spawn projectile forward from spawn point
+        if (Physics.Raycast(ray, out hit, 1000f, layerMask))
+        {
+            targetPoint = hit.point;
+            Debug.Log("Aiming at: " + hit.collider.name + " at position: " + hit.point);
+        }
+        else
+        {
+            targetPoint = ray.GetPoint(1000);
+        }
+
+        // Calculate direction from camera to target first
+        Vector3 shootingDirection = (targetPoint - playerCamera.transform.position).normalized;
+
+        // Spawn projectile slightly in front of spawn point in the shooting direction
         Vector3 spawnPosition = projectileSpawn.position + shootingDirection * projectileSpawnOffset;
         GameObject projectile = Instantiate(projectilePrefab, spawnPosition, Quaternion.identity);
+
+        // Debug visualization
+        Debug.DrawRay(spawnPosition, shootingDirection * 100f, Color.red, 2f);
+        Debug.Log("Shooting direction: " + shootingDirection + " from spawn: " + spawnPosition);
 
         // Set up projectile physics
         Rigidbody rb = projectile.GetComponent<Rigidbody>();
@@ -77,10 +97,17 @@ public class Weapon : MonoBehaviour
         RaycastHit hit;
 
         Vector3 targetPoint;
-        if (Physics.Raycast(ray, out hit))
+        // Use a more precise raycast that hits exactly what we're aiming at
+        // Ignore the player layer to prevent self-hits
+        int layerMask = ~LayerMask.GetMask("Player");
+
+        if (Physics.Raycast(ray, out hit, 1000f, layerMask))
         {
-            // Aim at what we're looking at
+            // Aim at exactly what we're looking at
             targetPoint = hit.point;
+
+            // Debug: Show what we're aiming at
+            Debug.DrawLine(playerCamera.transform.position, hit.point, Color.green, 0.5f);
         }
         else
         {
