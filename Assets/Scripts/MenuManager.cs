@@ -141,6 +141,7 @@ public class MenuManager : MonoBehaviour
         // Reset time scale in case it was paused
         Time.timeScale = 1f;
 
+
         // Reload the current scene
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }

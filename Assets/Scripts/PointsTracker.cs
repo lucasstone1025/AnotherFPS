@@ -6,10 +6,8 @@ public class PointsTracker : MonoBehaviour
     public static PointsTracker instance;
 
     public TMP_Text scoreText;
-    public TMP_Text highscoreText;
 
     int score = 0;
-    int highscore = 0;
     int numKillsInRow = 0;
 
     private void Awake()
@@ -21,7 +19,6 @@ public class PointsTracker : MonoBehaviour
     void Start()
     {
         scoreText.text = "POINTS: " + score.ToString();
-        highscoreText.text = "HIGHSCORE: " + highscore.ToString();
     }
 
     public void AddKillPoints()
@@ -33,12 +30,19 @@ public class PointsTracker : MonoBehaviour
 
     public void AddWavePoints()
     {
-        score += 500;
-        scoreText.text = "POINTS: " + score.ToString();
+    score += 500;
+    scoreText.text = "POINTS: " + score.ToString();
     }
 
     public void MissedEnemy()
     {
         numKillsInRow = 0;
     }
+
+    public void ResetScore()
+    {
+    score = 0;
+    scoreText.text = "POINTS: " + score.ToString();
+    } 
+
 }
