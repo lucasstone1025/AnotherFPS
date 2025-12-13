@@ -9638,7 +9638,6 @@ RectTransform:
   - {fileID: 331009373}
   - {fileID: 780352011}
   - {fileID: 968399005}
-  - {fileID: 252017226}
   - {fileID: 1989460798}
   m_Father: {fileID: 1497740776}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -10243,7 +10242,7 @@ MonoBehaviour:
   restartButton: {fileID: 780352014}
   exitButton: {fileID: 968399008}
   roundsInputField: {fileID: 1989460801}
-  applyRoundsButton: {fileID: 252017229}
+  applyRoundsButton: {fileID: 0}
   gameOverRestartButton: {fileID: 1575914887}
   gameOverExitButton: {fileID: 676577976}
   victoryRestartButton: {fileID: 1263018889}
@@ -11212,6 +11211,7 @@ GameObject:
   - component: {fileID: 637176283}
   - component: {fileID: 637176282}
   - component: {fileID: 637176285}
+  - component: {fileID: 637176286}
   m_Layer: 3
   m_Name: Weapon
   m_TagString: Weapon
@@ -11331,6 +11331,104 @@ MonoBehaviour:
   projectileLifeTime: 3
   projectileSpawnOffset: 2.5
   shootCooldown: 1.5
+  fireSound: {fileID: 8300000, guid: 96892e56bf2414595b12eb577b45155a, type: 3}
+--- !u!82 &637176286
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 637176280}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1001 &637590217
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14584,6 +14682,7 @@ MonoBehaviour:
   currentHealth: 0
   healthBarFill: {fileID: 1159779813}
   damageCooldown: 1
+  hurtSound: {fileID: 0}
 --- !u!1 &814003354 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1069567032315564, guid: bdf8e7438a7816543998181bd3067573, type: 3}
@@ -20452,7 +20551,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 252017226}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -26407,6 +26506,9 @@ RectTransform:
   - {fileID: 615227584}
   - {fileID: 60587474}
   - {fileID: 707191777}
+  - {fileID: 255790807}
+  - {fileID: 558158594}
+  - {fileID: 887259480}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -41828,3 +41930,4 @@ SceneRoots:
   - {fileID: 2127496096}
   - {fileID: 430970366}
   - {fileID: 597210365}
+  - {fileID: 1169087167}
